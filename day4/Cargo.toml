@@ -1,0 +1,8 @@
+[package]
+name = "aoc-day4"
+version = "0.1.0"
+authors = ["michael.kennedy@arctiq.ca>"]
+edition = "2021"
+
+[dependencies]
+regex = "1.10.2"
