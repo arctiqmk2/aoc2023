@@ -17,14 +17,31 @@ fn main() {
     let content = fs::read_to_string(filename).expect("Failed to read file");
     let lines: Vec<&str> = content.lines().collect();
 
-    let seed_ranges = parse_seed_ranges(lines[0]);
-    //println!("Seed ranges: {:?}", seed_ranges);
+    let mut seed_ranges = parse_seed_ranges(lines[0]);
+    println!("Seed ranges: {:?}", seed_ranges);
     let mut mappings = HashMap::new();
     process_mapping_blocks(&mut mappings, &lines[1..]);
-    //println!("Mappings: {:?}", mappings);
+    println!("Mappings: {:?}", mappings);
 
-    let lowest_location_seed = find_lowest_location_seed(&seed_ranges, &mappings);
-    println!("Lowest location seed: {:?}", lowest_location_seed);
+    for mapping_type in &["seed-to-soil", "soil-to-fertilizer", "fertilizer-to-water", "water-to-light", "light-to-temperature", "temperature-to-humidity", "humidity-to-location"] {
+        if let Some(mapping_rules) = mappings.get(*mapping_type) {
+            for (destination_start, source_start, range_size) in mapping_rules {
+                let source_end = source_start + range_size;
+                for (start_seed, end_seed) in &seed_ranges {
+                    if *source_start >= *start_seed && *source_start < *end_seed {
+                        let delta = destination_start - source_start;
+                        let new_start_seed = start_seed + delta;
+                        let new_end_seed = end_seed + delta;
+                        println!("{}: {} -> {} (delta: {})", mapping_type, start_seed, new_start_seed, delta);
+                        println!("{}: {} -> {} (delta: {})", mapping_type, end_seed, new_end_seed, delta);
+                    }
+                }
+            } 
+        }
+    }
+
+    //let lowest_location_seed = find_lowest_location_seed(&seed_ranges, &mappings);
+    //println!("Lowest location seed: {:?}", lowest_location_seed);
 }
 
 fn parse_seed_ranges(line: &str) -> Vec<(i64, i64)> {
