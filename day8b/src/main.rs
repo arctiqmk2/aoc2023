@@ -29,7 +29,7 @@ fn main() {
     
     println!("instructions: {:?}", instructions);
 
-    let re = Regex::new(r"(\w+) = \((\w+), (\w+)\)").unwrap();
+    let re = Regex::new(r"(\d{2}[A-Z]|[A-Z]{3}) = \((\d{2}[A-Z]|[A-Z]{3}), (\d{2}[A-Z]|[A-Z]{3})\)").unwrap();
 
     for line in lines[2..].iter() {
         for cap in re.captures_iter(line) {
@@ -39,13 +39,18 @@ fn main() {
             nodes.push(node.clone());
             lefts.insert(node.clone(), left.clone());
             rights.insert(node.clone(), right.clone());
-            //println!("node: {} {} {}", node, left, right);
+            println!("node: {} {} {}", node, left, right);
         }
     }
     //println!("nodes: {:?}", nodes);
     //println!("lefts: {:?}", lefts);
     //println!("rights: {:?}", rights);
-    let mut current_node = "AAA";
+    let mut current_nodes: Vec<String> = Vec::new();
+    current_nodes = nodes.iter()
+                         .filter(|&s| s.ends_with('A'))
+                         .cloned()
+                         .collect();
+    println!("start - current_nodes: {:?}", current_nodes);
     let mut step = 0;
     let mut found = 0;
 
@@ -54,55 +59,34 @@ fn main() {
             match instruction {
                 'L' => {
                     step += 1;
-                    current_node = lefts.get(current_node).unwrap();
-                    if current_node == "ZZZ" {
-                        println!("Found ZZZ in {} steps", step);
-                        found += 1;
-                        break;
-                    }
+                    current_nodes = current_nodes.iter()
+                                                 .map(|s| lefts.get(s).unwrap().clone())
+                                                 .collect();
                 },
                 'R' => {
                     step += 1;
-                    current_node = rights.get(current_node).unwrap();
-                    if current_node == "ZZZ" {
-                        println!("Found ZZZ in {} steps", step);
-                        found += 1;
-                        break;
-                    }
+                    current_nodes = current_nodes.iter()
+                                                 .map(|s| rights.get(s).unwrap().clone())
+                                                 .collect();
                 },
                 _ => {
                     println!("Unknown instruction: {}", instruction);
                     break;
                 }
             }
-        }
-    }
-    for instruction in instructions.iter() {
-        match instruction {
-            'L' => {
-                step += 1;
-                current_node = lefts.get(current_node).unwrap();
-                if current_node == "ZZZ" {
-                    println!("Found ZZZ in {} steps", step);
-                    found += 1;
-                    break;
-                }
-            },
-            'R' => {
-                step += 1;
-                current_node = rights.get(current_node).unwrap();
-                if current_node == "ZZZ" {
-                    println!("Found ZZZ in {} steps", step);
-                    found += 1;
-                    break;
-                }
-            },
-            _ => {
-                println!("Unknown instruction: {}", instruction);
+            // need to put check for all ending in Z here.
+            let check_nodes = current_nodes.iter()
+                                           .filter(|&s| !s.ends_with('Z'))
+                                           .cloned()
+                                           .collect::<Vec<String>>();
+            if check_nodes.len() == 0 {
+                found = 1;
+                println!("Found all Zs in {} steps", step);
                 break;
+
             }
         }
-    }
+    }              
 }
 
 
