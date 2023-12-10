@@ -63,7 +63,7 @@ fn main() {
             }
             stack[current_depth].splice(0..0,[current_addition]);
         }
-        println!("stack: {:?}", stack);
+        //println!("stack: {:?}", stack);
         reports.push(numbers);
         history_sum += current_addition;
     }
