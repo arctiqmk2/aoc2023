@@ -7,7 +7,6 @@
 //use std::collections::HashMap;
 use std::env;
 use std::fs;
-use std::cmp::{min, max};
 
 fn main() {
 
@@ -55,13 +54,8 @@ fn main() {
         let mut current_addition: i64 = 0;
         while current_depth > 0 {
             current_depth -= 1;
-            let delta = max(current_addition, stack[current_depth][0]) - min(current_addition, stack[current_depth][0]);
-            if stack[current_depth][0] > current_addition {
-                current_addition = delta;
-            } else {
-                current_addition = -delta;
-            }
-            stack[current_depth].splice(0..0,[current_addition]);
+            current_addition += stack[current_depth][stack[current_depth].len()-1];
+            stack[current_depth].push(current_addition);
         }
         //println!("stack: {:?}", stack);
         reports.push(numbers);
