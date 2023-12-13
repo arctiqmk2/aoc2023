@@ -11,7 +11,7 @@ use std::cmp::{min, max};
 //use std::collections::{HashSet, VecDeque};
 
 
-fn score_sets (mut cached_sets: HashMap<(usize, usize, usize), i64>, springs: Vec<u8>, numbers: Vec<i64>, position: usize, number_position: usize, current_length: usize) -> i64 {
+fn score_sets (cached_sets: &mut HashMap<(usize, usize, usize), i64>, springs: &Vec<u8>, numbers: &Vec<i64>, position: usize, number_position: usize, current_length: usize) -> i64 {
     
     match cached_sets.get(&(position, number_position, current_length)) {
         Some(value) => {
@@ -38,14 +38,14 @@ fn score_sets (mut cached_sets: HashMap<(usize, usize, usize), i64>, springs: Ve
         if springs[position] == c || springs[position] == b'?' {
             if c == b'.' &&
                current_length == 0 {
-                score += score_sets(cached_sets.clone(), springs.clone(), numbers.clone(), position + 1, number_position, 0);
+                score += score_sets(cached_sets, &springs, &numbers, position + 1, number_position, 0);
             } else if c == b'.' &&
                       current_length > 0 &&
                       number_position < numbers.len() &&
                       numbers[number_position] == current_length.try_into().unwrap() {
-                score += score_sets(cached_sets.clone(), springs.clone(), numbers.clone(), position + 1, number_position + 1, 0);
+                score += score_sets(cached_sets, &springs, &numbers, position + 1, number_position + 1, 0);
             } else if c == b'#' {
-                score += score_sets(cached_sets.clone(), springs.clone(), numbers.clone(), position + 1, number_position, current_length + 1);
+                score += score_sets(cached_sets, &springs, &numbers, position + 1, number_position, current_length + 1);
             }
         }
     }
@@ -87,7 +87,7 @@ fn main() {
         let mut locked: Vec<u8> = Vec::new();
         let mut cached_sets: HashMap<(usize, usize, usize), i64> = HashMap::new();
         //println!("springs: {:?}, numbers: {:?}", springs, numbers);
-        let localscore = score_sets(cached_sets, springs, numbers, 0, 0, 0);
+        let localscore = score_sets(&mut cached_sets, &springs, &numbers, 0, 0, 0);
         //println!("localscore: {:?}", localscore);
         total += localscore;
     });
