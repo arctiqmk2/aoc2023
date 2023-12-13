@@ -1,0 +1,11 @@
+[package]
+name = "aoc-day10"
+version = "0.1.0"
+authors = ["michael.kennedy@arctiq.ca>"]
+edition = "2021"
+
+[dependencies]
+#bigdecimal = "0.3"
+#num-bigint = "0.4"
+#num-traits = "0.2"
+#regex = "1.10.2"
